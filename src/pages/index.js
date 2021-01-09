@@ -3,19 +3,18 @@ import { Formik } from 'formik';
 import { useEffect } from 'react';
 export default function Home() {
   const [data, setData] = useState([]);
-sett
-  const handleFetch =(e)=>(
-  useEffect(() => {
-    (async () => {
-      fetch(`/.netlify/functions/read`)
-        .then(res => res.json())
-        .then(res => {
-          setData(res)
-        })
-    })
-  }, [])
-  )  
-handleFetch()
+  const handleFetch = (e) => (
+    useEffect(() => {
+      (async () => {
+        fetch(`/.netlify/functions/read`)
+          .then(res => res.json())
+          .then(res => {
+            setData(res)
+          })
+      })
+    }, [])
+  )
+  handleFetch()
   return <div>
     <h1>FaunaDB CRUD</h1>
     <Formik
@@ -34,8 +33,8 @@ handleFetch()
         fetch(`/.netlify/functions/create`, {
           method: 'post',
           body: JSON.stringify(values)
-        }).then(        
-)
+        }).then(
+        )
       }}
     >
       {({
@@ -69,8 +68,8 @@ handleFetch()
           />
           {errors.name && touched.name && errors.name}
           <br />
-          <button type="submit"  onClick={handleFetch()}
-           >
+          <button type="submit" onClick={handleFetch()}
+          >
             Add Message
            </button>
         </form>
@@ -92,16 +91,16 @@ handleFetch()
             {data.map((result, i) => {
               return (
                 <tr key={i}>
-                <td>{result.data.name}</td>
-                <td>{result.data.fname}</td>
+                  <td>{result.data.name}</td>
+                  <td>{result.data.fname}</td>
                 </tr>
-                )
-              })}
-              </tbody>
-            </table>
+              )
+            })}
+          </tbody>
+        </table>
       </div>
 
-      
+
 
     </div>
 
