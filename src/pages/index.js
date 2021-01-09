@@ -3,7 +3,6 @@ import { Formik } from 'formik';
 import { useEffect } from 'react';
 export default function Home() {
   const [data, setData] = useState([]);
-  const handleFetch = (e) => (
     useEffect(() => {
       (async () => {
         fetch(`/.netlify/functions/read`)
@@ -11,10 +10,9 @@ export default function Home() {
           .then(res => {
             setData(res)
           })
-      })
+      })()
     }, [])
-  )
-  handleFetch()
+  
   return <div>
     <h1>FaunaDB CRUD</h1>
     <Formik
@@ -68,7 +66,7 @@ export default function Home() {
           />
           {errors.name && touched.name && errors.name}
           <br />
-          <button type="submit" onClick={handleFetch()}
+          <button type="submit" disabled={isSubmitting}
           >
             Add Message
            </button>
@@ -89,6 +87,7 @@ export default function Home() {
           </thead>
           <tbody>
             {data.map((result, i) => {
+              console.log(result)
               return (
                 <tr key={i}>
                   <td>{result.data.name}</td>
