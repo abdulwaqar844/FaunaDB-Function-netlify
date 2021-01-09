@@ -1,0 +1,15 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "description": "Crud operations",
+  "main": "index.js",
+  "dependencies": {
+    "faunadb": "^4.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "waqar",
+  "license": "ISC"
+}
