@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
+import { useEffect } from 'react';
 export default function Home() {
+  const [data, setData] = useState([]);
+sett
+  const handleFetch =(e)=>(
+  useEffect(() => {
+    (async () => {
+      fetch(`/.netlify/functions/read`)
+        .then(res => res.json())
+        .then(res => {
+          setData(res)
+        })
+    })
+  }, [])
+  )  
+handleFetch()
   return <div>
     <h1>FaunaDB CRUD</h1>
     <Formik
-      initialValues={{ name: '' ,  fname: '' }}
+      initialValues={{ name: '', fname: '' }}
       validate={values => {
         const errors = {};
         if (!values.name) {
@@ -15,17 +30,12 @@ export default function Home() {
         return errors;
 
       }}
-      onSubmit={(values, { setSubmitting }) => {
-        console.log(values);
+      onSubmit={(values) => {
         fetch(`/.netlify/functions/create`, {
           method: 'post',
           body: JSON.stringify(values)
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-
-          });
+        }).then(        
+)
       }}
     >
       {({
@@ -40,7 +50,7 @@ export default function Home() {
       }) => (
         <form onSubmit={handleSubmit}>
           <input
-          placeholder="Enter Name"
+            placeholder="Enter Name"
             type="text"
             name="name"
             onChange={handleChange}
@@ -48,9 +58,9 @@ export default function Home() {
             value={values.name}
           />
           {errors.name && touched.name && errors.name}
-<br/>
+          <br />
           <input
-                    placeholder="Enter Father Name"
+            placeholder="Enter Father Name"
             type="text"
             name="fname"
             onChange={handleChange}
@@ -58,12 +68,42 @@ export default function Home() {
             value={values.fname}
           />
           {errors.name && touched.name && errors.name}
-          <br/>
-          <button type="submit" disabled={isSubmitting}>
+          <br />
+          <button type="submit"  onClick={handleFetch()}
+           >
             Add Message
            </button>
         </form>
       )}
     </Formik>
+    <div>
+      <h1>Data From FaunaDB</h1>
+      <div>
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Father Name</th>
+              <th>Update</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((result, i) => {
+              return (
+                <tr key={i}>
+                <td>{result.data.name}</td>
+                <td>{result.data.fname}</td>
+                </tr>
+                )
+              })}
+              </tbody>
+            </table>
+      </div>
+
+      
+
+    </div>
+
   </div>
 }

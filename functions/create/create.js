@@ -9,6 +9,7 @@ exports.handler = async (event, context) => {
     const messageBody = JSON.parse(event.body);
     var adminClient = new faunadb.Client({ secret: process.env.FAUNADB_SERVER_SECRET});
     const result = await adminClient.query(
+      
       q.Create(
         q.Collection('classes'),
         { data: { name:  messageBody.name,fname:messageBody.fname}}
