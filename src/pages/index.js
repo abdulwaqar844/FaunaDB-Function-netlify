@@ -1,18 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Formik } from 'formik';
-import { useEffect } from 'react';
+import List from "./../../components/List"
 export default function Home() {
-  const [data, setData] = useState([]);
-    useEffect(() => {
-      (async () => {
-        fetch(`/.netlify/functions/read`)
-          .then(res => res.json())
-          .then(res => {
-            setData(res)
-          })
-      })()
-    }, [])
-  
+ 
   return <div>
     <h1>FaunaDB CRUD</h1>
     <Formik
@@ -32,7 +22,8 @@ export default function Home() {
           method: 'post',
           body: JSON.stringify(values)
         }).then(
-        )
+          res=>res.json()
+        ).then(res=>console.log(res))
       }}
     >
       {({
@@ -73,35 +64,6 @@ export default function Home() {
         </form>
       )}
     </Formik>
-    <div>
-      <h1>Data From FaunaDB</h1>
-      <div>
-        <table border="1">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Father Name</th>
-              <th>Update</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((result, i) => {
-              console.log(result)
-              return (
-                <tr key={i}>
-                  <td>{result.data.name}</td>
-                  <td>{result.data.fname}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-
-
-
-    </div>
-
+ <List />   
   </div>
 }
