@@ -1,8 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import { Formik } from 'formik';
-import List from "./../../components/List"
+import TextField from '@material-ui/core/TextField';
+import CircularProgress from "@material-ui/core/CircularProgress"
+
 export default function Home() {
- 
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      '& > *': {
+        margin: theme.spacing(1),
+      },
+    },
+  }));
+
+  const classes = useStyles();
+  let [data, setData] = useState([]);
+  let [dataFetching, setdataFetching] = useState(false)
+  let retreiveData = async () => {
+      setdataFetching(true)
+     await fetch(`/.netlify/functions/read`)
+      .then(res => res.json())
+      .then(res => {
+        setData(res)
+        setdataFetching(false)
+      })
+  }
+  useEffect(() => {
+    retreiveData() 
+  }, [])
+
+  const handleDelete = async message => {
+    await fetch("/.netlify/functions/delete", {
+      method: "POST",
+      body: JSON.stringify({ id: message.ref["@ref"].id }),
+    })
+    retreiveData()
+
+
+
+  }
   return <div>
     <h1>FaunaDB CRUD</h1>
     <Formik
@@ -21,10 +58,10 @@ export default function Home() {
         fetch(`/.netlify/functions/create`, {
           method: 'post',
           body: JSON.stringify(values)
-        }).then(
-          res=>res.json()
-        ).then(res=>console.log(res))
-      }}
+        })
+      retreiveData() 
+     }
+  }
     >
       {({
         values,
@@ -36,9 +73,12 @@ export default function Home() {
         isSubmitting,
         /* and other goodies */
       }) => (
-        <form onSubmit={handleSubmit}>
-          <input
-            placeholder="Enter Name"
+        <form className={classes.root} noValidate autoComplete="off"
+          onSubmit={handleSubmit}
+        >
+          <TextField
+            id="standard-basic"
+            label="Name"
             type="text"
             name="name"
             onChange={handleChange}
@@ -47,8 +87,9 @@ export default function Home() {
           />
           {errors.name && touched.name && errors.name}
           <br />
-          <input
-            placeholder="Enter Father Name"
+          <TextField
+            id="standard-basic"
+            label="Father Name"
             type="text"
             name="fname"
             onChange={handleChange}
@@ -57,13 +98,65 @@ export default function Home() {
           />
           {errors.name && touched.name && errors.name}
           <br />
-          <button type="submit" disabled={isSubmitting}
+
+          <Button variant="contained" color="primary" type="submit" disabled={isSubmitting}
           >
             Add Message
-           </button>
+      </Button>
         </form>
       )}
     </Formik>
- <List />   
+    {dataFetching ? (
+      <div>
+        <CircularProgress />
+      </div>
+    ) : data.length >= 1 ? (
+
+      <div>
+        <h1>Data From FaunaDB</h1>
+        <div>
+          <table border="1">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Father Name</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((result, i) => {
+                return (
+                  <tr key={i}>
+                    <td>{result.data.name}</td>
+                    <td>{result.data.fname}</td>
+                    <td>
+                      <Button variant="contained" color="secondary"
+                        onClick={() => {
+                          handleDelete(result)
+                        }}
+                      >
+                        Delete
+                </Button>
+
+                    </td>
+                  </tr>
+                )
+              }
+              )
+              }
+            </tbody>
+          </table>
+        </div>
+
+
+
+      </div>
+
+    ) : (
+          <div className="no-task">
+            <h4>No Task for today</h4>
+          </div>
+        )
+    }
   </div>
 }
